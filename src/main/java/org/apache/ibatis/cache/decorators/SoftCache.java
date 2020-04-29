@@ -30,9 +30,21 @@ import org.apache.ibatis.cache.Cache;
  * @author Clinton Begin
  */
 public class SoftCache implements Cache {
+
+  /**
+   * 在SoftCache中，最近使用的一部分缓存项不会被GC回收
+   */
   private final Deque<Object> hardLinksToAvoidGarbageCollection;
+
+  /**
+   * 引用队列，用于记录已经被GC回收的缓存项
+   */
   private final ReferenceQueue<Object> queueOfGarbageCollectedEntries;
   private final Cache delegate;
+
+  /**
+   * 强引用的个数
+   */
   private int numberOfHardLinks;
 
   public SoftCache(Cache delegate) {
@@ -60,7 +72,9 @@ public class SoftCache implements Cache {
 
   @Override
   public void putObject(Object key, Object value) {
+    // 清理已经被GC回收的缓存项
     removeGarbageCollectedItems();
+    // 向缓存中添加缓存项
     delegate.putObject(key, new SoftEntry(key, value, queueOfGarbageCollectedEntries));
   }
 
@@ -69,9 +83,10 @@ public class SoftCache implements Cache {
     Object result = null;
     @SuppressWarnings("unchecked") // assumed delegate cache is totally managed by this cache
     SoftReference<Object> softReference = (SoftReference<Object>) delegate.getObject(key);
-    if (softReference != null) {
+    if (softReference != null) { // 判断是否存在该缓存项
+      // 获取SoftReference引用的value
       result = softReference.get();
-      if (result == null) {
+      if (result == null) { // 已经被GC回收
         delegate.removeObject(key);
       } else {
         // See #586 (and #335) modifications need more than a read lock 
@@ -108,6 +123,7 @@ public class SoftCache implements Cache {
 
   private void removeGarbageCollectedItems() {
     SoftEntry sv;
+    // 将在引用队列中的数据清除，也就是清除已经被GC回收的缓存项
     while ((sv = (SoftEntry) queueOfGarbageCollectedEntries.poll()) != null) {
       delegate.removeObject(sv.key);
     }

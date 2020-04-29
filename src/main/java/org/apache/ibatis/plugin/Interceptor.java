@@ -22,10 +22,25 @@ import java.util.Properties;
  */
 public interface Interceptor {
 
+  /**
+   * 执行拦截逻辑的方法
+   * @param invocation
+   * @return
+   * @throws Throwable
+   */
   Object intercept(Invocation invocation) throws Throwable;
 
+  /**
+   * 决定是否触发intercept方法
+   * @param target
+   * @return
+   */
   Object plugin(Object target);
 
+  /**
+   * 根据配置初始化Interceptor对象
+   * @param properties
+   */
   void setProperties(Properties properties);
 
 }

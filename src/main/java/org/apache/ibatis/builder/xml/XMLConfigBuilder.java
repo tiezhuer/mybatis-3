@@ -53,7 +53,9 @@ import org.apache.ibatis.type.TypeHandler;
  */
 public class XMLConfigBuilder extends BaseBuilder {
 
+  // 标识是否已经解析过mybatis-config.xml配置文件
   private boolean parsed;
+  // 用于解析配置文件的XpathParser对象
   private final XPathParser parser;
   private String environment;
   private final ReflectorFactory localReflectorFactory = new DefaultReflectorFactory();

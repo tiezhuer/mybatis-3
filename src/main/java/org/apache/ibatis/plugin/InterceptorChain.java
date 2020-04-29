@@ -21,11 +21,20 @@ import java.util.List;
 
 /**
  * @author Clinton Begin
+ * 拦截器链
  */
 public class InterceptorChain {
 
+  /**
+   * 存储拦截器链，使用数组来实现
+   */
   private final List<Interceptor> interceptors = new ArrayList<Interceptor>();
 
+  /**
+   * 为每个拦截器创建代理
+   * @param target
+   * @return
+   */
   public Object pluginAll(Object target) {
     for (Interceptor interceptor : interceptors) {
       target = interceptor.plugin(target);
