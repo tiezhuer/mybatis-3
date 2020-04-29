@@ -22,6 +22,8 @@ import org.apache.ibatis.cache.decorators.TransactionalCache;
 
 /**
  * @author Clinton Begin
+ * MyBatis二级缓存CachingExecutor依赖的核心组件
+ * 用于记录某个SqlSession的某个事物中的需要向某个二级缓存中添加的缓存数据
  */
 public class TransactionalCacheManager {
 

@@ -55,7 +55,13 @@ public abstract class BaseExecutor implements Executor {
   protected Executor wrapper;
 
   protected ConcurrentLinkedQueue<DeferredLoad> deferredLoads;
+  /**
+   * 一级缓存，用于缓存该Executor对象查询结果集映射得到的结果对象
+   */
   protected PerpetualCache localCache;
+  /**
+   * 一级缓存，用于缓存输出类型的参数
+   */
   protected PerpetualCache localOutputParameterCache;
   protected Configuration configuration;
 
@@ -267,6 +273,10 @@ public abstract class BaseExecutor implements Executor {
     }
   }
 
+
+
+  //-------------------模板方法已经实现，下面这些扩展方法都是需要延迟到子类中实现的-----------------------------
+
   protected abstract int doUpdate(MappedStatement ms, Object parameter)
       throws SQLException;
 
@@ -278,6 +288,9 @@ public abstract class BaseExecutor implements Executor {
 
   protected abstract <E> Cursor<E> doQueryCursor(MappedStatement ms, Object parameter, RowBounds rowBounds, BoundSql boundSql)
       throws SQLException;
+
+
+  //--------------------------------------------------
 
   protected void closeStatement(Statement statement) {
     if (statement != null) {

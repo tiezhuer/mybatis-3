@@ -29,37 +29,109 @@ import org.apache.ibatis.transaction.Transaction;
 
 /**
  * @author Clinton Begin
+ * Executor是MyBatis的核心接口之一，其中定义了数据库操作的基本方法
  */
 public interface Executor {
 
   ResultHandler NO_RESULT_HANDLER = null;
 
+  /**
+   * 执行update，insert，delete三种类型的SQL语句
+   * @param ms
+   * @param parameter
+   * @return
+   * @throws SQLException
+   */
   int update(MappedStatement ms, Object parameter) throws SQLException;
 
+  /**
+   * 执行select的SQL语句
+   * @param ms
+   * @param parameter
+   * @param rowBounds
+   * @param resultHandler
+   * @param cacheKey
+   * @param boundSql
+   * @param <E>
+   * @return
+   * @throws SQLException
+   */
   <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey cacheKey, BoundSql boundSql) throws SQLException;
 
   <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler) throws SQLException;
 
   <E> Cursor<E> queryCursor(MappedStatement ms, Object parameter, RowBounds rowBounds) throws SQLException;
 
+  /**
+   * 批量执行SQL语句
+   * @return
+   * @throws SQLException
+   */
   List<BatchResult> flushStatements() throws SQLException;
 
+  /**
+   * 提交事务
+   * @param required
+   * @throws SQLException
+   */
   void commit(boolean required) throws SQLException;
 
+  /**
+   * 回滚事务
+   * @param required
+   * @throws SQLException
+   */
   void rollback(boolean required) throws SQLException;
 
+  /**
+   * 创建缓存中的CacheKey对象
+   * @param ms
+   * @param parameterObject
+   * @param rowBounds
+   * @param boundSql
+   * @return
+   */
   CacheKey createCacheKey(MappedStatement ms, Object parameterObject, RowBounds rowBounds, BoundSql boundSql);
 
+  /**
+   * 判断该CacheKey是否缓存
+   * @param ms
+   * @param key
+   * @return
+   */
   boolean isCached(MappedStatement ms, CacheKey key);
 
+  /**
+   * 清空一级缓存
+   */
   void clearLocalCache();
 
+  /**
+   * 延迟加载一级缓存中的对象
+   * @param ms
+   * @param resultObject
+   * @param property
+   * @param key
+   * @param targetType
+   */
   void deferLoad(MappedStatement ms, MetaObject resultObject, String property, CacheKey key, Class<?> targetType);
 
+  /**
+   * 获取事务对象
+   * @return
+   */
   Transaction getTransaction();
 
+  /**
+   * 关闭Executor对象
+   * @param forceRollback
+   */
   void close(boolean forceRollback);
 
+  /**
+   * 检测Executor是否已经关闭
+   * @return
+   */
   boolean isClosed();
 
   void setExecutorWrapper(Executor executor);
